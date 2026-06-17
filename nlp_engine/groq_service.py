@@ -1,7 +1,20 @@
 import os
 from groq import Groq
 
-client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+_client = None
+
+
+def _get_client():
+    global _client
+    if _client is None:
+        api_key = os.getenv("GROQ_API_KEY")
+        if not api_key:
+            raise EnvironmentError(
+                "GROQ_API_KEY environment variable is not set. "
+                "Please configure it before using the NLP engine."
+            )
+        _client = Groq(api_key=api_key)
+    return _client
 
 SYSTEM_PROMPT = """You are a requirements engineering assistant for a SaaS platform called Requify.
 Your job is to take raw user form responses and produce a clean, professional
@@ -48,7 +61,7 @@ formatting. Do not include any explanation or preamble — only the report."""
 
 def process_requirements(raw_responses_text):
     """Send raw form responses to Groq and return the structured text report."""
-    response = client.chat.completions.create(
+    response = _get_client().chat.completions.create(
         model="llama-3.3-70b-versatile",
         messages=[
             {"role": "system", "content": SYSTEM_PROMPT},
