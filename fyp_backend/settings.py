@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 # 1. Build paths first
 BASE_DIR = Path(__file__).resolve().parent.parent
-load_dotenv(BASE_DIR / '.env')
+load_dotenv(BASE_DIR / '.env', override=False)
 
 # 2. Now you can use BASE_DIR safely
 MEDIA_URL = '/media/'
